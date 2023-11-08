@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+iframe#webpack-dev-server-client-overlay{display:none!important}
+
+html, body, #root, iframe {
+  height: 100%;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  background-color: #f8f8f8;
+}
