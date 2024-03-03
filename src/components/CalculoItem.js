@@ -2,39 +2,160 @@ import React, { useContext, useEffect, useState } from "react";
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import InnermostContainer from "./InnermostContainer";
 import ExtrasItem from "./ExtrasItem";
-import { Button, FormControl, TextField } from "@mui/material";
-import CustomComboBox from "./CustomComboBox";
-import PercentageInputField from "./PercentageInputField";
+import { Button, FormControl, TextField, Typography } from "@mui/material";
+import CustomComboBox from "./elements/CustomComboBox";
+import PercentageInputField from "./elements/PercentageInputField";
 import { CalculoContext } from "../context/CalculoProvider";
+import CalculoComboBox from "./elements/CalculoComboBox";
+import ConfirmationPopup from "./elements/ConfirmationPopup";
 
 
-const advogados = ["Advogado 1"];
-const cidades = ["Cidade 1"];
+const advogados = [process.env.REACT_APP_ADVOGADOS];
+const cidades = [process.env.REACT_APP_CIDADES];
 
-const CalculoItem = ({ calculo, setCalculo }) => {
+const CalculoItem = ({ disabled }) => {
     const [count, setCount] = useState(1);
-    
+
+    const {calculo, setCalculo, calculosSalvos, setLoadingCalculos, setLoadingSaveCalculo, setLoadingDeleteCalculo, saveCalculo, deleteCalculo} = useContext(CalculoContext);
+
     const [advogado, setAdvogado] = useState(calculo.advogado);
     const [numProcesso, setNumProcesso] = useState(calculo.numProcesso);
     const [cidade, setCidade] = useState(calculo.cidade);
     const [honorarios, setHonorarios] = useState(calculo.honorarios);
 
-    const {extrasList, setExtrasList} = useContext(CalculoContext);
+    const [nomeCalculo, setNomeCalculo] = useState("");
+    const [importCalculo, setImportCalculo] = useState(false);
+
+    const [showSavePopup, setShowSavePopup] = useState(false);
+    const [showDeletePopup, setShowDeletePopup] = useState(false);
+
+    const saveCalculoToSheet = () => {
+        saveCalculo(calculo, nomeCalculo);
+        setLoadingCalculos(true);
+        setLoadingSaveCalculo(true);
+        setShowSavePopup(false);
+    }
+
+    const deleteCalculoOnSheet = () => {
+        deleteCalculo(nomeCalculo);
+        setLoadingCalculos(true);
+        setLoadingDeleteCalculo(true);
+        setShowDeletePopup(false);
+    }
 
     useEffect(() => {
-        const updatedCalculos = extrasList.map(item => ({
-            ...item,
-            honorarios: honorarios
-        }));
+        let calculoObj = calculosSalvos.filter((item) => item.nome.toUpperCase() === nomeCalculo.toUpperCase());
+    
+        if (calculoObj.length > 0 && importCalculo) {
+            setCalculo({ ...calculoObj[0].calculo});
+            setImportCalculo(false);
+        }
+    // eslint-disable-next-line 
+    }, [importCalculo]);
+    
+    useEffect(() => {
+        setAdvogado(calculo.advogado);
+        setNumProcesso(calculo.numProcesso);
+        setCidade(calculo.cidade);
+        setHonorarios(calculo.honorarios);
+    }, [calculo]);
 
-        setCalculo({ ...calculo, advogado: advogado, numProcesso: numProcesso, cidade: cidade, honorarios: honorarios, calculos: updatedCalculos });
+    useEffect(() => {
+        setCalculo(prevCalculo => {
+            const updatedCalculos = prevCalculo.calculos.map(item => ({
+                ...item,
+                honorarios: honorarios
+            }));
+    
+            return { 
+                ...prevCalculo, 
+                advogado: advogado, 
+                numProcesso: numProcesso, 
+                cidade: cidade, 
+                honorarios: honorarios, 
+                calculos: updatedCalculos 
+            };
+        });
     // eslint-disable-next-line
-    }, [advogado, numProcesso, cidade, honorarios, extrasList]);
+    }, [advogado, numProcesso, cidade, honorarios]);
+
+
 
     return (
         <div className="flex flex-col flex-wrap space-x-2 justify-center items-center w-full">
 
-            <div className="flex flex-col my-2 flex-wrap space-y-3 justify-center items-center w-full p-3">
+            <ConfirmationPopup open={showSavePopup} message={`Já existe um cálculo com o nome "${nomeCalculo}".`} message2={`Deseja sobrescrevê-lo?`} onConfirm={() => saveCalculoToSheet()} onClose={() => setShowSavePopup(false)} />
+            <ConfirmationPopup open={showDeletePopup} message={`Tem certeza que deseja excluir o cálculo "${nomeCalculo}"?`} message2={``} onConfirm={() => deleteCalculoOnSheet()} onClose={() => setShowDeletePopup(false)} />
+
+            <div className="flex flex-col mb-2 flex-wrap space-y-3 justify-center items-center w-full p-3">
+            
+                <div className="w-full space-y-1">
+                    <Typography variant="h5">
+                        Gerenciar cálculos
+                    </Typography>
+
+                    <div className="flex flex-row w-full space-x-3">
+                        <FormControl variant="outlined" className="w-full">
+                            <CalculoComboBox 
+                                label={"Nome do cálculo"}
+                                value={nomeCalculo}
+                                setValue={setNomeCalculo}
+                                defaultValues={calculosSalvos.map((item) => item.nome)} 
+                            />
+                        </FormControl>
+
+                        <Button
+                            variant="contained"
+                            size="small"
+                            style={{ borderRadius: 5, backgroundColor: "blue" }}
+                            disabled={nomeCalculo.trim() === "" || calculosSalvos.filter((item) => item.nome.toUpperCase() === nomeCalculo.toUpperCase()).length === 0}
+                            onClick={() => {
+                                setImportCalculo(true);
+                            }}
+                        >
+                            IMPORTAR CÁLCULO
+                        </Button>
+
+                        <Button
+                            variant="contained"
+                            size="small"
+                            style={{ borderRadius: 5, backgroundColor: "green" }}
+                            disabled={disabled || nomeCalculo.trim() === ""}
+                            onClick={() => {
+                                if (calculosSalvos.filter((item) => item.nome.toUpperCase() === nomeCalculo.toUpperCase()).length > 0) {
+                                    setShowSavePopup(true);
+                                    return;
+                                }
+                                saveCalculoToSheet();
+                            }}
+                        >
+                            SALVAR CÁLCULO
+                        </Button>
+
+                        <Button
+                            variant="contained"
+                            size="small"
+                            style={{ borderRadius: 5, backgroundColor: "red" }}
+                            disabled={nomeCalculo.trim() === "" || calculosSalvos.filter((item) => item.nome.toUpperCase() === nomeCalculo.toUpperCase()).length === 0}
+                            onClick={() => {
+                                setShowDeletePopup(true);
+                            }}
+                        >
+                            EXCLUIR CÁLCULO
+                        </Button>
+                    </div>
+                </div>
+
+                <div className="w-full py-1 pb-8">
+                    <hr className="w-full border-t border-1 border-gray-400" />
+                </div>
+
+                <div className="w-full space-y-1">
+                    <Typography variant="h5">
+                        Informações do cálculo
+                    </Typography>
+                </div>
+
                 <FormControl variant="outlined" className="w-full">
                     <CustomComboBox 
                         label={"Advogado"}
@@ -72,43 +193,57 @@ const CalculoItem = ({ calculo, setCalculo }) => {
             </div>
 
             <div className="mb-3 flex flex-col items-center justify-center w-[75%]">
-                {extrasList.map((item) => (
+                {calculo.calculos.map((item) => (
                     <InnermostContainer                    
                         key={item.id} 
                         id={item.id} 
-                        disabled={extrasList.length <= 1} 
-                        onDelete={(id) => setExtrasList(extrasList.filter((item) => item.id !== id))}
+                        disabled={calculo.calculos.length <= 1} 
+                        onDelete={(id) => setCalculo({...calculo, calculos: calculo.calculos.filter((item) => item.id !== id)})}
                     >
                         <ExtrasItem 
                             key={item.id} 
-                            calculo={item} 
-                            extrasList={extrasList}
-                            setExtrasList={setExtrasList}
+                            calculoItem={item} 
                         />
                     </InnermostContainer>   
                 ))}
 
-                <Button
-                    variant="contained"
-                    style={{ borderRadius: 5, width: '48px', height: '42px', backgroundColor: "#0068b3" }}
-                    onClick={() => {
-                        setCount(count + 1);
-                        setExtrasList([...extrasList, {
-                            id: (count + 1).toString(),
-                            valor: "",
-                            juros: "",
-                            multa: "",
-                            honorarios: calculo.honorarios,
-                            dataInicial: "",
-                            dataFinal: "",
-                            dataInicialJuros: "",
-                            dataFinalJuros: "",
-                            isCalculoUnico: true,
-                        }]);
-                    }}
-                >
-                    <ControlPointIcon sx={{ color: "white", fontSize: "24px" }} />
-                </Button>
+
+                <div className="flex flex-row items-center justify-center w-full space-x-2">
+                    <Button
+                        variant="contained"
+                        style={{ borderRadius: 5, width: '88px', height: '42px', backgroundColor: "green" }}
+                        onClick={() => {
+                            setCount(count + 1);
+                            setCalculo({...calculo, calculos: [...calculo.calculos, {
+                                id: (count + 1).toString(),
+                                valor: "",
+                                juros: "",
+                                multa: "",
+                                honorarios: calculo.honorarios,
+                                dataInicial: "",
+                                dataFinal: "",
+                                dataInicialJuros: "",
+                                dataFinalJuros: "",
+                                isCalculoUnico: true,
+                            }]});
+                        }}
+                    >
+                        <ControlPointIcon sx={{ color: "white", fontSize: "24px" }} className="mr-1" /> NOVO
+                    </Button>
+
+                    <Button
+                        variant="contained"
+                        style={{ borderRadius: 5, width: '120px', height: '42px', backgroundColor: "#0068b3" }}
+                        onClick={() => {
+                            const lastCalculo = calculo.calculos[calculo.calculos.length - 1];
+                            const newCalculo = {...lastCalculo, id: (count + 1).toString()};
+                            setCount(count + 1);
+                            setCalculo({...calculo, calculos: [...calculo.calculos, newCalculo]});
+                        }}
+                    >
+                        <ControlPointIcon sx={{ color: "white", fontSize: "24px" }} className="mr-1" /> DUPLICAR
+                    </Button>
+                </div>
             </div>
         </div>
     );

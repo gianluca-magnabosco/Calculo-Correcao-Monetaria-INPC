@@ -202,7 +202,7 @@ export const CalculoTemplate = (state) => {
                 </View>
 
                 <Text style={{...styles.textBold, textAlign: "right"}}>
-                    {calculo.cidade ? `${calculo.cidade}, ` : ""}{new Date().getDate().toString().padStart(2, '0')} de {mesesExtenso[new Date().getMonth()]} de {new Date().getFullYear()}
+                    {(!calculo.calculo.cidade || calculo.calculo.cidade === "") ? "" : `${calculo.calculo.cidade}, `}{new Date().getDate().toString().padStart(2, '0')} de {mesesExtenso[new Date().getMonth()]} de {new Date().getFullYear()}
                 </Text>
             </Page>
         </Document>

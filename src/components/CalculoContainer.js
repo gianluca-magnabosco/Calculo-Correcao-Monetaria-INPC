@@ -1,15 +1,15 @@
 import React, { useContext, useEffect, useState } from "react";
 import CalculoItem from "./CalculoItem";
 import InnerContainer from "./InnerContainer";
-import { Backdrop, Button, CircularProgress } from "@mui/material";
+import { Button } from "@mui/material";
 import { INPCContext } from '../context/INPCProvider';
 import { gerarCalculo, isCalculoValid } from "../functions/calculoFunctions";
 import { useNavigate } from "react-router-dom";
 import { CalculoContext } from "../context/CalculoProvider";
+import Loading from "./elements/Loading";
 
 
 const gerarPDF = (calculo, variacoesINPC) => {
-    
     let resultingCalculo = [];
 
     for (let item of calculo.calculos) {
@@ -26,26 +26,25 @@ const CalculoContainer = () => {
 
     const { variacoesINPC, ultimaDataIndice } = useContext(INPCContext);
 
-    const {calculo, setCalculo} = useContext(CalculoContext);
+    const {calculo} = useContext(CalculoContext);
 
     const [disabled, setDisabled] = useState(false);
 
-    const [loading, setLoading] = useState(false);
+    const [loadingPdf, setLoadingPdf] = useState(false);
 
     useEffect(() => {
-        if (loading) {
+        if (loadingPdf) {
             let result = gerarPDF(calculo, variacoesINPC);
 
             let debitoDoExecutado = result.reduce((total, item) => total + Number(item.montanteCorrigidoComJurosEMulta), 0);
             let debitoValorHonorarios = (debitoDoExecutado * (Number(result[0].honorarios.replace(",", ".").replace("%", "")) / 100));
             let totalGeral = (Number(debitoDoExecutado.toFixed(2)) + Number(debitoValorHonorarios.toFixed(2))).toFixed(2);
 
-            
             navigate("/pdf", { state: { calculo: calculo, calculosArray: result, debitoDoExecutado: debitoDoExecutado, debitoValorHonorarios: debitoValorHonorarios, totalGeral: totalGeral }});
-            setLoading(false);
+            setLoadingPdf(false);
         }
     // eslint-disable-next-line
-    }, [loading]);
+    }, [loadingPdf]);
 
     useEffect(() => {
         if (!isCalculoValid(calculo, ultimaDataIndice)) {
@@ -62,35 +61,20 @@ const CalculoContainer = () => {
                 Última data do índice do INPC: {!ultimaDataIndice ? "" : `${(ultimaDataIndice.getMonth() + 1).toString().padStart(2, '0')}/${ultimaDataIndice.getFullYear()}`}
             </div>
 
-            <Backdrop
-                sx={{ color: '#fff', zIndex: 999 }}
-                open={loading}
-                className="flex flex-col items-center justify-center"
-            >
-                <CircularProgress 
-                    color="primary"
-                    thickness={6}
-                    value={66}
-                    disableShrink={true}
-                />
-
-                <div className="mt-2 font-medium">
-                    Gerando PDF...
-                </div>
-            </Backdrop>
+            <Loading loading={loadingPdf} message="Gerando PDF..." />
 
             <InnerContainer>
-                <CalculoItem calculo={calculo} setCalculo={setCalculo} />
+                <CalculoItem disabled={disabled} />
             </InnerContainer>
 
             <div className="pb-20">
                 <Button
                     variant="contained"
                     size="large"
-                    style={{ borderRadius: 5, backgroundColor: "#0068b3" }}
+                    style={{ borderRadius: 5, backgroundColor: "green" }}
                     disabled={disabled}
                     onClick={() => {
-                        setLoading(true);
+                        setLoadingPdf(true);
                     }}
                 >
                     GERAR CÁLCULO

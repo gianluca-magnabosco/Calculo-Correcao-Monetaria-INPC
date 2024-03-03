@@ -1,43 +1,58 @@
 import React, { useContext, useEffect, useState } from "react";
 import FormControl from '@mui/material/FormControl';
-import CurrencyInputField from "./CurrencyInputField";
-import PercentageInputField from "./PercentageInputField";
-import DateInputField from "./DateInputField";
+import CurrencyInputField from "./elements/CurrencyInputField";
+import PercentageInputField from "./elements/PercentageInputField";
+import DateInputField from "./elements/DateInputField";
 import { INPCContext } from "../context/INPCProvider";
 import { FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { CalculoContext } from "../context/CalculoProvider";
 
-const ExtrasItem = ({ calculo, extrasList, setExtrasList }) => {
+const ExtrasItem = ({ calculoItem }) => {
 
-    const [valor, setValor] = useState(calculo.valor);
-    const [juros, setJuros] = useState(calculo.juros);
-    const [multa, setMulta] = useState(calculo.multa);
-    const [dataInicial, setDataInicial] = useState(calculo.dataInicial);
-    const [dataFinal, setDataFinal] = useState(calculo.dataFinal);
-    const [dataInicialJuros, setDataInicialJuros] = useState(calculo.dataInicialJuros);
-    const [dataFinalJuros, setDataFinalJuros] = useState(calculo.dataFinalJuros);
-    const [isCalculoUnico, setIsCalculoUnico] = useState(calculo.isCalculoUnico);
+    const {calculo, setCalculo} = useContext(CalculoContext);
+
+    const [valor, setValor] = useState(calculoItem.valor);
+    const [juros, setJuros] = useState(calculoItem.juros);
+    const [multa, setMulta] = useState(calculoItem.multa);
+    const [dataInicial, setDataInicial] = useState(calculoItem.dataInicial);
+    const [dataFinal, setDataFinal] = useState(calculoItem.dataFinal);
+    const [dataInicialJuros, setDataInicialJuros] = useState(calculoItem.dataInicialJuros);
+    const [dataFinalJuros, setDataFinalJuros] = useState(calculoItem.dataFinalJuros);
+    const [isCalculoUnico, setIsCalculoUnico] = useState(calculoItem.isCalculoUnico);
 
     const { ultimaDataIndice } = useContext(INPCContext);
 
     useEffect(() => {
-        const updatedExtrasList = extrasList.map((item) => {
-          if (item.id === calculo.id) {
-            return {
-                ...item,
-                valor,
-                juros,
-                multa,
-                dataInicial,
-                dataFinal,
-                dataInicialJuros,
-                dataFinalJuros,
-                isCalculoUnico
-            };
-        }
+        setValor(calculoItem.valor);
+        setJuros(calculoItem.juros);
+        setMulta(calculoItem.multa);
+        setDataInicial(calculoItem.dataInicial);
+        setDataFinal(calculoItem.dataFinal);
+        setDataInicialJuros(calculoItem.dataInicialJuros);
+        setDataFinalJuros(calculoItem.dataFinalJuros);
+        setIsCalculoUnico(calculoItem.isCalculoUnico);
+    // eslint-disable-next-line
+    }, [calculo]);
+
+    useEffect(() => {  
+        let updatedCalculoItems = calculo.calculos.map((item) => {
+            if (item.id === calculoItem.id) {
+                return {
+                    ...item,
+                    valor,
+                    juros,
+                    multa,
+                    dataInicial,
+                    dataFinal,
+                    dataInicialJuros,
+                    dataFinalJuros,
+                    isCalculoUnico
+                };
+            }
             return item;
         });
       
-        setExtrasList(updatedExtrasList);
+        setCalculo({...calculo, calculos: updatedCalculoItems});
     
     // eslint-disable-next-line
     }, [valor, juros, multa, dataInicial, dataFinal, dataInicialJuros, dataFinalJuros, isCalculoUnico]);
@@ -111,7 +126,7 @@ const ExtrasItem = ({ calculo, extrasList, setExtrasList }) => {
                         ultimaDataIndice={ultimaDataIndice}
                     />
                 </FormControl>
-
+            
                 <FormControl variant="outlined" sx={{maxWidth: "11.5rem"}}>
                     <DateInputField
                         label={"Data Final"}

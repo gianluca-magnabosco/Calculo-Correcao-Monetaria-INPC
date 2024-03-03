@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from 'react';
 import JSZip from 'jszip';
 import * as XLSX from 'xlsx';
+import Loading from '../components/elements/Loading';
 
 const zipUrl = 'https://ftp.ibge.gov.br/Precos_Indices_de_Precos_ao_Consumidor/INPC/Serie_Historica/inpc_SerieHist.zip';
 const validMonths = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
@@ -9,6 +10,7 @@ export const INPCContext = createContext();
 
 export const INPCProvider = ({ children }) => {
     const [xlsData, setXlsData] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [hasBeenLoaded, setHasBeenLoaded] = useState(false);
     const [variacoesINPC, setVariacoesINPC] = useState([]);
 
@@ -75,6 +77,11 @@ export const INPCProvider = ({ children }) => {
         }
     }, [xlsData, hasBeenLoaded]);
 
+    useEffect(() => { 
+        if (loading && hasBeenLoaded) {
+            setLoading(false);
+        }
+    }, [loading, hasBeenLoaded]);
 
 
     const value = {
@@ -84,7 +91,11 @@ export const INPCProvider = ({ children }) => {
 
     return (
         <INPCContext.Provider value={value}>
-            {children}
+            <>
+                <Loading loading={loading} message="Baixando índice do INPC..." />
+
+                {children}
+            </>
         </INPCContext.Provider>
     );
 };
