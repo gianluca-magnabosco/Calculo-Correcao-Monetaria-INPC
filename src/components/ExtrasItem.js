@@ -72,7 +72,7 @@ const ExtrasItem = ({ calculoItem }) => {
             && (anoInicial.length === 4 && anoFinal.length === 4)
             && (dataInicialDate < new Date() && dataInicialDate > new Date("01/01/1994"))
             && (dataFinalDate < new Date() && dataFinalDate > new Date("01/01/1994"))
-            && (dataInicialDate >= dataFinalDate)
+            && (dataInicialDate > dataFinalDate)
         ) {
             setHelperError(true);
             return;

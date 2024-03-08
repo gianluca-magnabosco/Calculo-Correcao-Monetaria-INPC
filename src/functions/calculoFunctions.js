@@ -67,7 +67,7 @@ export const isCalculoValid = (calculo, ultimaDataIndice) => {
             && (anoInicial.length === 4 && anoFinal.length === 4)
             && (dataInicialDate < new Date() && dataInicialDate > new Date("01/01/1994") && dataInicialDate > ultimaDataIndice)
             && (dataFinalDate < new Date() && dataFinalDate > new Date("01/01/1994") && dataFinalDate < ultimaDataIndice)
-            && (dataInicialDate >= dataFinalDate)
+            && (dataInicialDate > dataFinalDate)
         ) {
             return false;
         }
