@@ -63,11 +63,11 @@ export const isCalculoValid = (calculo, ultimaDataIndice) => {
         const [mesFinal, anoFinal] = item.dataFinal.split('/');
         const dataFinalDate = new Date(`${mesFinal}/${dia}/${anoFinal}`);
 
-        if ((dataInicialDate.toString() !== "Invalid Date" && dataFinalDate.toString() !== "Invalid Date")
-            && (anoInicial.length === 4 && anoFinal.length === 4)
-            && (dataInicialDate < new Date() && dataInicialDate > new Date("01/01/1994") && dataInicialDate > ultimaDataIndice)
-            && (dataFinalDate < new Date() && dataFinalDate > new Date("01/01/1994") && dataFinalDate < ultimaDataIndice)
-            && (dataInicialDate > dataFinalDate)
+        if ((dataInicialDate.toString() === "Invalid Date" || dataFinalDate.toString() === "Invalid Date")
+            || (anoInicial.length !== 4 || anoFinal.length !== 4)
+            || (dataInicialDate > new Date() || dataInicialDate < new Date("01/01/1994") || dataInicialDate > ultimaDataIndice)
+            || (dataFinalDate > new Date() || dataFinalDate < new Date("01/01/1994") || dataFinalDate > ultimaDataIndice)
+            || (dataInicialDate > dataFinalDate)
         ) {
             return false;
         }
@@ -79,11 +79,13 @@ export const isCalculoValid = (calculo, ultimaDataIndice) => {
         const dataFinalJurosDate = new Date(`${mesFinalJuros}/${diaFinalJuros}/${anoFinalJuros}`);
 
         if ((Number(item.juros.replace(",", ".")) !== 0)
-            && (dataInicialJurosDate.toString() !== "Invalid Date" && dataFinalJurosDate.toString() !== "Invalid Date")
-            && (anoInicial.length === 4 && anoFinal.length === 4)
-            && (dataInicialJurosDate < new Date() && dataInicialJurosDate > new Date("01/01/1994"))
-            && (dataFinalJurosDate < new Date() && dataFinalJurosDate > new Date("01/01/1994"))
-            && (dataInicialJurosDate >= dataFinalJurosDate)
+            && (
+                (dataInicialJurosDate.toString() === "Invalid Date" || dataFinalJurosDate.toString() === "Invalid Date")
+                || (anoInicialJuros.length !== 4 || anoFinalJuros.length !== 4)
+                || (dataInicialJurosDate > new Date() || dataInicialJurosDate < new Date("01/01/1994"))
+                || (dataFinalJurosDate > new Date() || dataFinalJurosDate < new Date("01/01/1994"))
+                || (dataInicialJurosDate >= dataFinalJurosDate)
+            )
         ) {
             return false;
         }

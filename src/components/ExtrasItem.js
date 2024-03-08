@@ -68,11 +68,11 @@ const ExtrasItem = ({ calculoItem }) => {
         const [mesFinal, anoFinal] = dataFinal.split('/');
         const dataFinalDate = new Date(`${mesFinal}/${dia}/${anoFinal}`);
 
-        if ((dataInicialDate.toString() !== "Invalid Date" && dataFinalDate.toString() !== "Invalid Date")
-            && (anoInicial.length === 4 && anoFinal.length === 4)
-            && (dataInicialDate < new Date() && dataInicialDate > new Date("01/01/1994"))
-            && (dataFinalDate < new Date() && dataFinalDate > new Date("01/01/1994"))
-            && (dataInicialDate > dataFinalDate)
+        if ((dataInicialDate.toString() === "Invalid Date" || dataFinalDate.toString() === "Invalid Date")
+            || (anoInicial.length !== 4 || anoFinal.length !== 4)
+            || (dataInicialDate > new Date() || dataInicialDate < new Date("01/01/1994"))
+            || (dataFinalDate > new Date() || dataFinalDate < new Date("01/01/1994"))
+            || (dataInicialDate > dataFinalDate)
         ) {
             setHelperError(true);
             return;
@@ -90,11 +90,13 @@ const ExtrasItem = ({ calculoItem }) => {
         const dataFinalJurosDate = new Date(`${mesFinal}/${diaFinal}/${anoFinal}`);
 
         if ((Number(juros.replace(",", ".")) !== 0)
-            && (dataInicialJurosDate.toString() !== "Invalid Date" && dataFinalJurosDate.toString() !== "Invalid Date")
-            && (anoInicial.length === 4 && anoFinal.length === 4)
-            && (dataInicialJurosDate < new Date() && dataInicialJurosDate > new Date("01/01/1994"))
-            && (dataFinalJurosDate < new Date() && dataFinalJurosDate > new Date("01/01/1994"))
-            && (dataInicialJurosDate >= dataFinalJurosDate)
+            && ( 
+                (dataInicialJurosDate.toString() === "Invalid Date" || dataFinalJurosDate.toString() === "Invalid Date")
+                || (anoInicial.length !== 4 || anoFinal.length !== 4)
+                || (dataInicialJurosDate > new Date() || dataInicialJurosDate < new Date("01/01/1994"))
+                || (dataFinalJurosDate > new Date() || dataFinalJurosDate < new Date("01/01/1994"))
+                || (dataInicialJurosDate >= dataFinalJurosDate)
+            )
         ) {
             setHelperErrorJuros(true);
             return;

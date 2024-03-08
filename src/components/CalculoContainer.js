@@ -47,12 +47,7 @@ const CalculoContainer = () => {
     }, [loadingPdf]);
 
     useEffect(() => {
-        if (!isCalculoValid(calculo, ultimaDataIndice)) {
-            setDisabled(true);
-            return;
-        }
-
-        setDisabled(false);
+        setDisabled(!isCalculoValid(calculo, ultimaDataIndice));
     }, [calculo, ultimaDataIndice]);
 
     return (
