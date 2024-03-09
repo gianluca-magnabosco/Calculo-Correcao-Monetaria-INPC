@@ -37,7 +37,7 @@ export const isCalculoValid = (calculo, ultimaDataIndice) => {
         }
 
         if ((Number(item.juros.replace(",", ".")) !== 0) &&
-            (item.dataInicialJuros.length === 10 && /^\d{2}\/\d{2}\/\d{4}$/.test(item.dataInicialJuros))) {
+            (item.dataInicialJuros.length === 12 && /^\d{2}\/\d{2}\/\d{4}$/.test(item.dataInicialJuros))) {
             const [day, month, year] = item.dataInicialJuros.split('/');
             const date = new Date(`${month}/${day}/${year}`);
 
@@ -47,7 +47,7 @@ export const isCalculoValid = (calculo, ultimaDataIndice) => {
         }
 
         if ((Number(item.juros.replace(",", ".")) !== 0) &&
-            (item.dataFinalJuros.length === 10 && /^\d{2}\/\d{2}\/\d{4}$/.test(item.dataFinalJuros))) {
+            (item.dataFinalJuros.length === 12 && /^\d{2}\/\d{2}\/\d{4}$/.test(item.dataFinalJuros))) {
             const [day, month, year] = item.dataFinalJuros.split('/');
             const date = new Date(`${month}/${day}/${year}`);
 
