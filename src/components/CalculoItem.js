@@ -48,6 +48,7 @@ const CalculoItem = ({ disabled }) => {
     
         if (calculoObj.length > 0 && importCalculo) {
             setCalculo({ ...calculoObj[0].calculo});
+            setCount(calculoObj[0].calculo.calculos.length);
             setImportCalculo(false);
         }
     // eslint-disable-next-line 
