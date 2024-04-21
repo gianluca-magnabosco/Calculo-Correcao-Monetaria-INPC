@@ -5,9 +5,9 @@ import { IconButton } from "@mui/material";
 const InnermostContainer = ({ disabled, children, onDelete, id }) => {
     return (
         <div className="flex flex-1 flex-col items-center justify-center p-4 w-full">
-            <div className="border-[1px] rounded-md bg-[#fefefe] flex-1 w-full">
-                <div className="flex flex-col items-center justify-center p-2 pr-3">
-                    <div className="self-end text-end mt-[-0.5rem] mr-[-0.65rem]">
+            <div className="border-[1px] rounded-md bg-[#fefefe] flex-1 w-[80%]">
+                <div className="flex flex-col items-center justify-center p-2 pr-3 w-full">
+                    <div className="self-end text-end mt-[-0.5rem] mr-[-0.65rem] w-full">
                         <IconButton onClick={() => onDelete(id)} disabled={disabled}>
                             <CloseIcon sx={{ color: `${disabled ? "gray" : "black"}`, fontSize: "16px" }} />
                         </IconButton>

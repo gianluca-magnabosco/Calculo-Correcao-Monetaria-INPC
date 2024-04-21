@@ -94,7 +94,7 @@ const CalculoItem = ({ disabled }) => {
                         Gerenciar cálculos
                     </Typography>
 
-                    <div className="flex flex-row w-full space-x-3">
+                    <div className="flex flex-row w-full space-x-3 pt-2">
                         <FormControl variant="outlined" className="w-full">
                             <CalculoComboBox 
                                 label={"Nome do cálculo"}
@@ -192,7 +192,7 @@ const CalculoItem = ({ disabled }) => {
                 </FormControl>
             </div>
 
-            <div className="mb-3 flex flex-col items-center justify-center w-[75%]">
+            <div className="mb-3 flex flex-col items-center justify-center w-[90%]">
                 {calculo.calculos.map((item) => (
                     <InnermostContainer                    
                         key={item.id} 
@@ -225,6 +225,7 @@ const CalculoItem = ({ disabled }) => {
                                 dataInicialJuros: "",
                                 dataFinalJuros: "",
                                 isCalculoUnico: true,
+                                dataFinalCalculo: "",
                             }]});
                         }}
                     >

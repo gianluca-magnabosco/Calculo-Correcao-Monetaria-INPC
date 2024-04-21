@@ -25,6 +25,7 @@ export const CalculoProvider = ({ children }) => {
             dataInicialJuros: "",
             dataFinalJuros: "",
             isCalculoUnico: true,
+            dataFinalCalculo: "",
         }],
     }
 

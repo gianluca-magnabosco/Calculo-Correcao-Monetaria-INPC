@@ -89,6 +89,21 @@ export const isCalculoValid = (calculo, ultimaDataIndice) => {
         ) {
             return false;
         }
+
+        const diaFinalCalculo = "01";
+
+        const [mesFinalCalculo, anoFinalCalculo] = item.dataFinalCalculo.split('/');
+        const dataFinalCalculoDate = new Date(`${mesFinalCalculo}/${diaFinalCalculo}/${anoFinalCalculo}`);
+
+        if ((!item.isCalculoUnico) 
+            && ((dataFinalCalculoDate.toString() === "Invalid Date")
+            || (anoFinalCalculo.length !== 4)
+            || (dataFinalCalculoDate > new Date() || dataFinalCalculoDate < new Date("01/01/1994") || dataFinalCalculoDate > ultimaDataIndice)
+            || (dataFinalCalculoDate > dataFinalDate)
+            || (dataFinalCalculoDate < dataInicialDate))
+        ) {
+            return false;
+        }
     }
     
     return true;
@@ -224,11 +239,17 @@ export const gerarCalculo = (calculo, variacoesINPC) => {
 
     const [diaFinalJuros, mesFinalJuros, anoFinalJuros] = calculo.dataFinalJuros.split('/');
     const dataFinalJurosDate = new Date(`${mesFinalJuros}/${diaFinalJuros}/${anoFinalJuros}`);
+    
+    const diaFinalCalculo = "01";
+    const [mesFinalCalculo, anoFinalCalculo] = calculo.dataFinalCalculo.split('/');
+    const dataFinalCalculoDate = new Date(`${mesFinalCalculo}/${diaFinalCalculo}/${anoFinalCalculo}`);
 
     let currentDate = dataInicialDate;
     let currentDateJuros = dataInicialJurosDate;
 
-    while (currentDate <= dataFinalDate) {
+    let dataFinalAnalise = calculo.isCalculoUnico ? dataFinalDate : dataFinalCalculoDate;
+
+    while (currentDate <= dataFinalAnalise) {
         let result = calcular(variacoesINPC, calculo, currentDate, dataFinalDate, currentDateJuros, dataFinalJurosDate);
         resultingCalculo.push(result);
 

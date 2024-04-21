@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { CalculoTemplate } from '../pdf/CalculoTemplate';
 import { PDFViewer } from '@react-pdf/renderer';
 import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
@@ -24,27 +23,26 @@ const PDFPage = () => {
     
     return (
         <>
-            <Box sx={{ flexGrow: 1 }}>
-                <AppBar position="static" className="bg-gradient-to-r from-[#0068b3] via-[#049cc0] to-[#3898c0]">
-                    <Toolbar variant="dense">
-                        <IconButton 
-                            edge="start" 
-                            color="inherit" 
-                            aria-label="voltar" 
-                            sx={{ mr: 2 }}
-                            onClick={() => navigate("/")}
-                        >
-                            <ArrowBackIcon />
-                        </IconButton>
-                
-                        <Typography variant="h6" color="inherit" component="div">
-                            Voltar
-                        </Typography>
-                    </Toolbar>
-                </AppBar>
-            </Box>
+            <AppBar position="static" className="bg-gradient-to-r from-[#0068b3] via-[#049cc0] to-[#3898c0]">
+                <Toolbar variant="dense">
+                    <IconButton 
+                        edge="start" 
+                        color="inherit" 
+                        aria-label="voltar" 
+                        sx={{ mr: 2 }}
+                        onClick={() => navigate("/")}
+                    >
+                        <ArrowBackIcon />
+                    </IconButton>
+            
+                    <Typography variant="h6" color="inherit" component="div">
+                        Voltar
+                    </Typography>
+                </Toolbar>
+            </AppBar>
 
-            <PDFViewer>
+
+            <PDFViewer style={{height: '100%'}}>
                 <CalculoTemplate calculo={location.state} />
             </PDFViewer>
         </>

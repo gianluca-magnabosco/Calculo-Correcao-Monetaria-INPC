@@ -4,12 +4,31 @@
 
 iframe#webpack-dev-server-client-overlay{display:none!important}
 
-html, body, #root, iframe {
+html, body, #root {
   height: 100%;
-}
-
-#root {
   display: flex;
+  flex: 1;
   flex-direction: column;
   background-color: #f8f8f8;
+  font-size: 0.7vw;
+  min-width: 0;
+}
+
+/* Use media queries for different screen sizes */
+@media only screen and (max-width: 600px) {
+  html, body, #root {
+    font-size: 1.85vw; /* Increase font size for smaller screens */
+  }
+}
+
+@media only screen and (min-width: 601px) and (max-width: 1200px) {
+  html, body, #root {
+    font-size: 1.35vw; /* Adjust font size for medium screens */
+  }
+}
+
+@media only screen and (min-width: 1201px) {
+  html, body, #root {
+    font-size: 0.85vw; /* Decrease font size for larger screens */
+  }
 }

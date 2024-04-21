@@ -19,8 +19,15 @@ const ExtrasItem = ({ calculoItem }) => {
     const [dataInicialJuros, setDataInicialJuros] = useState(calculoItem.dataInicialJuros);
     const [dataFinalJuros, setDataFinalJuros] = useState(calculoItem.dataFinalJuros);
     const [isCalculoUnico, setIsCalculoUnico] = useState(calculoItem.isCalculoUnico);
+    const [dataFinalCalculo, setDataFinalCalculo] = useState(calculoItem.dataFinalCalculo);
+    const [showDataFinalCalculo, setShowDataFinalCalculo] = useState(false);
 
     const { ultimaDataIndice } = useContext(INPCContext);
+
+    const [helperError, setHelperError] = useState(false);
+    const [helperErrorJuros, setHelperErrorJuros] = useState(false);
+    const [helperErrorFinalCalculo, setHelperErrorFinalCalculo] = useState(false);
+    const [errorFinalCalculo, setErrorFinalCalculo] = useState("");
 
     useEffect(() => {
         setValor(calculoItem.valor);
@@ -31,6 +38,9 @@ const ExtrasItem = ({ calculoItem }) => {
         setDataInicialJuros(calculoItem.dataInicialJuros);
         setDataFinalJuros(calculoItem.dataFinalJuros);
         setIsCalculoUnico(calculoItem.isCalculoUnico);
+        setDataFinalCalculo(calculoItem.dataFinalCalculo);
+
+        console.log("popula state extrasItem ");
     // eslint-disable-next-line
     }, [calculo]);
 
@@ -46,19 +56,19 @@ const ExtrasItem = ({ calculoItem }) => {
                     dataFinal,
                     dataInicialJuros,
                     dataFinalJuros,
-                    isCalculoUnico
+                    isCalculoUnico,
+                    dataFinalCalculo
                 };
             }
             return item;
         });
       
         setCalculo({...calculo, calculos: updatedCalculoItems});
+
+        console.log("popula cálculo extrasItem");
     
     // eslint-disable-next-line
-    }, [valor, juros, multa, dataInicial, dataFinal, dataInicialJuros, dataFinalJuros, isCalculoUnico]);
-
-    const [helperError, setHelperError] = useState(false);
-    const [helperErrorJuros, setHelperErrorJuros] = useState(false);
+    }, [valor, juros, multa, dataInicial, dataFinal, dataInicialJuros, dataFinalJuros, isCalculoUnico, dataFinalCalculo]);
 
     useEffect(() => {
         const dia = "01";
@@ -79,6 +89,8 @@ const ExtrasItem = ({ calculoItem }) => {
         }
 
         setHelperError(false);
+
+        console.log("valida data");
     }, [dataInicial, dataFinal]);
     
 
@@ -103,22 +115,75 @@ const ExtrasItem = ({ calculoItem }) => {
         }
 
         setHelperErrorJuros(false);
+
+        console.log("valida dataJuros");
     }, [dataInicialJuros, dataFinalJuros, juros]);
     
+
+    useEffect(() => {
+        if (isCalculoUnico) {
+            setShowDataFinalCalculo(false);
+        } else {
+            setShowDataFinalCalculo(true);
+
+            const dia = "01";
+            const [mesInicial, anoInicial] = dataInicial.split('/');
+            const dataInicialDate = new Date(`${mesInicial}/${dia}/${anoInicial}`);
+    
+            const [mesFinal, anoFinal] = dataFinal.split('/');
+            const dataFinalDate = new Date(`${mesFinal}/${dia}/${anoFinal}`);
+
+            const diaFinalCalculo = "01";
+            const [mesFinalCalculo, anoFinalCalculo] = dataFinalCalculo.split('/');
+            const dataFinalCalculoDate = new Date(`${mesFinalCalculo}/${diaFinalCalculo}/${anoFinalCalculo}`);
+
+            if ((dataFinalCalculoDate.toString() === "Invalid Date")
+                || (anoFinalCalculo.length !== 4)
+                || (dataFinalCalculoDate > new Date() || dataFinalCalculoDate < new Date("01/01/1994"))
+                || (dataFinalCalculoDate > dataFinalDate)
+                || (dataFinalCalculoDate < dataInicialDate)
+            ) {
+                setHelperErrorFinalCalculo(true);
+
+                if (dataFinalCalculoDate > dataFinalDate) {
+                    setErrorFinalCalculo("Maior Final");
+                } else if (dataFinalCalculoDate < dataInicialDate) {
+                    setErrorFinalCalculo("Menor Inicial")
+                } else {
+                    setErrorFinalCalculo("");
+                }
+
+                return;
+            }
+
+            setHelperErrorFinalCalculo(false);
+            setErrorFinalCalculo("")
+
+            console.log("valida data final calculo");
+        }
+    }, [isCalculoUnico, dataFinalCalculo, dataInicial, dataFinal]);
     
     return (
-        <div className="flex flex-col items-center justify-center w-full pb-6 pt-2 space-y-3">
-            <FormControl variant="outlined" fullWidth sx={{maxWidth: "23.5rem"}}>
-                <CurrencyInputField 
-                    label={"Valor inicial"}
-                    value={valor}
-                    setValue={setValor}
-                    maxValue={1000000000} 
-                />
-            </FormControl>
+        <div className="flex flex-col items-center justify-center w-full pb-6 space-y-3">
+            <div className="mb-3 font-semibold text-2xl">
+                <h1>
+                    Cálculo {calculo.calculos.indexOf(calculoItem) + 1} ({`ID: ${calculoItem.id}`})
+                </h1>
+            </div>
+
+            <div className="w-full flex flex-col items-center justify-center">
+                <FormControl variant="outlined" className="flex-1 min-w-[60%] max-w-prose w-[32rem]">
+                    <CurrencyInputField 
+                        label={"Valor inicial"}
+                        value={valor}
+                        setValue={setValor}
+                        maxValue={1000000000} 
+                    />
+                </FormControl>
+            </div>
 
             <div className="flex flex-row items-center justify-center space-x-2 flex-wrap">
-                <FormControl variant="outlined" sx={{maxWidth: "11.5rem"}}>
+                <FormControl variant="outlined" className="flex-1">
                     <DateInputField
                         label={"Data Inicial"}
                         value={dataInicial}
@@ -129,7 +194,7 @@ const ExtrasItem = ({ calculoItem }) => {
                     />
                 </FormControl>
             
-                <FormControl variant="outlined" sx={{maxWidth: "11.5rem"}}>
+                <FormControl variant="outlined" className="flex-1">
                     <DateInputField
                         label={"Data Final"}
                         value={dataFinal}
@@ -142,7 +207,7 @@ const ExtrasItem = ({ calculoItem }) => {
             </div>
 
             <div className="flex flex-row items-center justify-center space-x-2 flex-wrap">
-                <FormControl variant="outlined" sx={{maxWidth: "11.5rem"}}>
+                <FormControl variant="outlined" className="flex-1">
                     <PercentageInputField
                         label={"Multa"}
                         value={multa}
@@ -151,7 +216,7 @@ const ExtrasItem = ({ calculoItem }) => {
                     />
                 </FormControl>
 
-                <FormControl variant="outlined" sx={{maxWidth: "11.5rem"}}>
+                <FormControl variant="outlined" className="flex-1">
                     <PercentageInputField 
                         label={"Juros"}
                         value={juros}
@@ -162,7 +227,7 @@ const ExtrasItem = ({ calculoItem }) => {
             </div>
 
             <div className="flex flex-row items-center justify-center space-x-2 flex-wrap">
-                <FormControl variant="outlined" sx={{maxWidth: "11.5rem"}}>
+                <FormControl variant="outlined" className="flex-1">
                     <DateInputField
                         label={"Data Inicial Juros"}
                         value={dataInicialJuros}
@@ -173,7 +238,7 @@ const ExtrasItem = ({ calculoItem }) => {
                     />
                 </FormControl>
 
-                <FormControl variant="outlined" sx={{maxWidth: "11.5rem"}}>
+                <FormControl variant="outlined" className="flex-1">
                     <DateInputField
                         label={"Data Final Juros"}
                         value={dataFinalJuros}
@@ -190,7 +255,22 @@ const ExtrasItem = ({ calculoItem }) => {
                     <FormControlLabel control={<Radio value={true} />} label="Cálculo único" />
                     <FormControlLabel control={<Radio value={false} />} label="Cálculo mês a mês" />
                 </RadioGroup>
+
             </div>
+
+            {showDataFinalCalculo ?                 
+                <FormControl variant="outlined" className="flex-1">
+                    <DateInputField
+                        label={"Data Final Cálculo"}
+                        value={dataFinalCalculo}
+                        setValue={setDataFinalCalculo}
+                        helperErrorFinalCalculo={helperErrorFinalCalculo}
+                        errorFinalCalculo={errorFinalCalculo}
+                        type="MM/AAAA"
+                        ultimaDataIndice={ultimaDataIndice}
+                    />
+                </FormControl> 
+            : null}
         </div>
     );
 }

@@ -1,34 +1,50 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import TextField from '@mui/material/TextField';
 import { InputAdornment } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
 
-const DateInputField = ({ value, setValue, label, type, disabled, helperError, helperErrorJuros, ultimaDataIndice }) => {
+const DateInputField = ({ value, setValue, label, type, disabled, helperError, helperErrorJuros, helperErrorFinalCalculo, errorFinalCalculo, ultimaDataIndice }) => {
+
+    const inputRef = useRef(null);
 
     const handleInputChange = (e) => {
-        const rawValue = e.target.value.replace(/[^0-9]/g, '');
+        const input = e.target;
+        let caretPosition = input.selectionStart;
+        const rawValue = input.value.replace(/[^0-9]/g, '');
+
         if (rawValue === '') {
             setValue('');
             return;
         }
-
+    
+        let formattedValue = '';
+    
         if (type === 'DD/MM/AAAA') {
-            if (rawValue.length <= 2) {
-                setValue(rawValue);
-            } else if (rawValue.length <= 4) {
-                setValue(`${rawValue.slice(0, 2)}/${rawValue.slice(2)}`);
-            } else {
-                setValue(
-                    `${rawValue.slice(0, 2)}/${rawValue.slice(2, 4)}/${rawValue.slice(4, 8)}`
-                );
-            }
+          if (rawValue.length <= 2) {
+                formattedValue = rawValue;
+          } else if (rawValue.length <= 4) {
+                formattedValue = `${rawValue.slice(0, 2)}/${rawValue.slice(2)}`;
+          } else {
+                formattedValue = `${rawValue.slice(0, 2)}/${rawValue.slice(2, 4)}/${rawValue.slice(4, 8)}`;
+          }
         } else if (type === 'MM/AAAA') {
-            if (rawValue.length <= 2) {
-                setValue(rawValue);
-            } else {
-                setValue(`${rawValue.slice(0, 2)}/${rawValue.slice(2, 6)}`);
-            }
+          if (rawValue.length <= 2) {
+                formattedValue = rawValue;
+          } else {
+                formattedValue = `${rawValue.slice(0, 2)}/${rawValue.slice(2, 6)}`;
+          }
         }
+    
+        if (caretPosition === input.value.length) {
+            caretPosition = formattedValue.length;
+        }
+
+        if (input.value[caretPosition - 1] === '/' && formattedValue[caretPosition] === '/') {
+            caretPosition++;
+        }
+    
+        setValue(formattedValue);
+        inputRef.current.setSelectionRange(caretPosition, caretPosition);
     };
 
     const [error, setError] = useState(false);
@@ -99,11 +115,21 @@ const DateInputField = ({ value, setValue, label, type, disabled, helperError, h
             return;
         }
 
+        if (helperErrorFinalCalculo) {
+            setError(true);
+            if (errorFinalCalculo === "Menor Inicial") {
+                setErrorMessage("A data final do cálculo deve ser posterior à data inicial.");
+            } else if (errorFinalCalculo === "Maior Final") {
+                setErrorMessage("A data final do cálculo deve ser anterior à data final.");
+            }
+            return;
+        }
+
         setError(false);
         setErrorMessage("");
     
     // eslint-disable-next-line
-    }, [value, disabled, helperError, helperErrorJuros, ultimaDataIndice]);
+    }, [value, disabled, helperError, helperErrorJuros, ultimaDataIndice, helperErrorFinalCalculo, errorFinalCalculo]);
 
     return (
         <TextField
@@ -121,6 +147,7 @@ const DateInputField = ({ value, setValue, label, type, disabled, helperError, h
             }}
             error={error}
             helperText={errorMessage}
+            inputRef={inputRef}
         />
     );
 };
