@@ -37,7 +37,7 @@ const ConfirmationPopup = ({ open, message, message2, onConfirm, onClose }) => {
                 </CardContent>
                 <CardActions className="justify-center">
                     <Button 
-                        style={{ borderRadius: 5, backgroundColor: "green" }} 
+                        style={{ borderRadius: 5, backgroundColor: "#6CB408" }} 
                         variant="contained" 
                         onClick={onConfirm} 
                         className="text-white mr-2"
@@ -46,7 +46,7 @@ const ConfirmationPopup = ({ open, message, message2, onConfirm, onClose }) => {
                     </Button>
 
                     <Button 
-                        style={{ borderRadius: 5, backgroundColor: "red" }} 
+                        style={{ borderRadius: 5, backgroundColor: "#B4086C" }} 
                         variant="contained" 
                         onClick={onClose} 
                         className="text-white mr-2"

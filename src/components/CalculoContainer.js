@@ -66,7 +66,7 @@ const CalculoContainer = () => {
                 <Button
                     variant="contained"
                     size="large"
-                    style={{ borderRadius: 5, backgroundColor: "green" }}
+                    style={{ borderRadius: 5, backgroundColor: "#6CB408" }}
                     disabled={disabled}
                     onClick={() => {
                         setLoadingPdf(true);

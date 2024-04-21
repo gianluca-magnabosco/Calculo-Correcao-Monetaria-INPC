@@ -17,7 +17,7 @@ const CustomSnackbar = ({ message, setMessage, type }) => {
                 variant="filled" 
                 onClose={() => setMessage("")} 
                 severity={type} 
-                sx={{ width: '100%'}}
+                sx={{ width: '100%', backgroundColor: type === "error" ? "#B4086C" : "#6CB408"}}
             >
                 <AlertTitle>
                     {type === "error" ? "Erro!" : "Sucesso!"}

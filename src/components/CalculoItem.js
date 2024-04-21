@@ -107,7 +107,7 @@ const CalculoItem = ({ disabled }) => {
                         <Button
                             variant="contained"
                             size="small"
-                            style={{ borderRadius: 5, backgroundColor: "blue" }}
+                            style={{ borderRadius: 5, backgroundColor: "#086CB4", maxWidth: "20%" }}
                             disabled={nomeCalculo.trim() === "" || calculosSalvos.filter((item) => item.nome.toUpperCase() === nomeCalculo.toUpperCase()).length === 0}
                             onClick={() => {
                                 setImportCalculo(true);
@@ -119,7 +119,7 @@ const CalculoItem = ({ disabled }) => {
                         <Button
                             variant="contained"
                             size="small"
-                            style={{ borderRadius: 5, backgroundColor: "green" }}
+                            style={{ borderRadius: 5, backgroundColor: "#6CB408", maxWidth: "20%" }}
                             disabled={disabled || nomeCalculo.trim() === ""}
                             onClick={() => {
                                 if (calculosSalvos.filter((item) => item.nome.toUpperCase() === nomeCalculo.toUpperCase()).length > 0) {
@@ -135,7 +135,7 @@ const CalculoItem = ({ disabled }) => {
                         <Button
                             variant="contained"
                             size="small"
-                            style={{ borderRadius: 5, backgroundColor: "red" }}
+                            style={{ borderRadius: 5, backgroundColor: "#b4086c", maxWidth: "20%" }}
                             disabled={nomeCalculo.trim() === "" || calculosSalvos.filter((item) => item.nome.toUpperCase() === nomeCalculo.toUpperCase()).length === 0}
                             onClick={() => {
                                 setShowDeletePopup(true);
@@ -211,7 +211,7 @@ const CalculoItem = ({ disabled }) => {
                 <div className="flex flex-row items-center justify-center w-full space-x-2">
                     <Button
                         variant="contained"
-                        style={{ borderRadius: 5, width: '88px', height: '42px', backgroundColor: "green" }}
+                        style={{ borderRadius: 5, width: '88px', height: '42px', backgroundColor: "#6CB408" }}
                         onClick={() => {
                             setCount(count + 1);
                             setCalculo({...calculo, calculos: [...calculo.calculos, {
@@ -234,7 +234,7 @@ const CalculoItem = ({ disabled }) => {
 
                     <Button
                         variant="contained"
-                        style={{ borderRadius: 5, width: '120px', height: '42px', backgroundColor: "#0068b3" }}
+                        style={{ borderRadius: 5, width: '120px', height: '42px', backgroundColor: "#086CB4" }}
                         onClick={() => {
                             const lastCalculo = calculo.calculos[calculo.calculos.length - 1];
                             const newCalculo = {...lastCalculo, id: (count + 1).toString()};

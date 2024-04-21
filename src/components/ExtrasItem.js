@@ -39,8 +39,6 @@ const ExtrasItem = ({ calculoItem }) => {
         setDataFinalJuros(calculoItem.dataFinalJuros);
         setIsCalculoUnico(calculoItem.isCalculoUnico);
         setDataFinalCalculo(calculoItem.dataFinalCalculo);
-
-        console.log("popula state extrasItem ");
     // eslint-disable-next-line
     }, [calculo]);
 
@@ -64,9 +62,6 @@ const ExtrasItem = ({ calculoItem }) => {
         });
       
         setCalculo({...calculo, calculos: updatedCalculoItems});
-
-        console.log("popula cálculo extrasItem");
-    
     // eslint-disable-next-line
     }, [valor, juros, multa, dataInicial, dataFinal, dataInicialJuros, dataFinalJuros, isCalculoUnico, dataFinalCalculo]);
 
@@ -89,8 +84,6 @@ const ExtrasItem = ({ calculoItem }) => {
         }
 
         setHelperError(false);
-
-        console.log("valida data");
     }, [dataInicial, dataFinal]);
     
 
@@ -115,8 +108,6 @@ const ExtrasItem = ({ calculoItem }) => {
         }
 
         setHelperErrorJuros(false);
-
-        console.log("valida dataJuros");
     }, [dataInicialJuros, dataFinalJuros, juros]);
     
 
@@ -125,43 +116,42 @@ const ExtrasItem = ({ calculoItem }) => {
             setShowDataFinalCalculo(false);
         } else {
             setShowDataFinalCalculo(true);
+        }
 
-            const dia = "01";
-            const [mesInicial, anoInicial] = dataInicial.split('/');
-            const dataInicialDate = new Date(`${mesInicial}/${dia}/${anoInicial}`);
-    
-            const [mesFinal, anoFinal] = dataFinal.split('/');
-            const dataFinalDate = new Date(`${mesFinal}/${dia}/${anoFinal}`);
+        const dia = "01";
+        const [mesInicial, anoInicial] = dataInicial.split('/');
+        const dataInicialDate = new Date(`${mesInicial}/${dia}/${anoInicial}`);
 
-            const diaFinalCalculo = "01";
-            const [mesFinalCalculo, anoFinalCalculo] = dataFinalCalculo.split('/');
-            const dataFinalCalculoDate = new Date(`${mesFinalCalculo}/${diaFinalCalculo}/${anoFinalCalculo}`);
+        const [mesFinal, anoFinal] = dataFinal.split('/');
+        const dataFinalDate = new Date(`${mesFinal}/${dia}/${anoFinal}`);
 
-            if ((dataFinalCalculoDate.toString() === "Invalid Date")
-                || (anoFinalCalculo.length !== 4)
-                || (dataFinalCalculoDate > new Date() || dataFinalCalculoDate < new Date("01/01/1994"))
-                || (dataFinalCalculoDate > dataFinalDate)
-                || (dataFinalCalculoDate < dataInicialDate)
-            ) {
-                setHelperErrorFinalCalculo(true);
+        const diaFinalCalculo = "01";
+        const [mesFinalCalculo, anoFinalCalculo] = dataFinalCalculo.split('/');
+        const dataFinalCalculoDate = new Date(`${mesFinalCalculo}/${diaFinalCalculo}/${anoFinalCalculo}`);
 
-                if (dataFinalCalculoDate > dataFinalDate) {
-                    setErrorFinalCalculo("Maior Final");
-                } else if (dataFinalCalculoDate < dataInicialDate) {
-                    setErrorFinalCalculo("Menor Inicial")
-                } else {
-                    setErrorFinalCalculo("");
-                }
+        if (!isCalculoUnico 
+            && ((dataFinalCalculoDate.toString() === "Invalid Date")
+            || (anoFinalCalculo.length !== 4)
+            || (dataFinalCalculoDate > new Date() || dataFinalCalculoDate < new Date("01/01/1994") || dataFinalCalculoDate > ultimaDataIndice)
+            || (dataFinalCalculoDate > dataFinalDate)
+            || (dataFinalCalculoDate < dataInicialDate))
+        ) {
+            setHelperErrorFinalCalculo(true);
 
-                return;
+            if (dataFinalCalculoDate > dataFinalDate) {
+                setErrorFinalCalculo("Maior Final");
+            } else if (dataFinalCalculoDate < dataInicialDate) {
+                setErrorFinalCalculo("Menor Inicial")
+            } else {
+                setErrorFinalCalculo("Insira uma data válida!");
             }
 
-            setHelperErrorFinalCalculo(false);
-            setErrorFinalCalculo("")
-
-            console.log("valida data final calculo");
+            return;
         }
-    }, [isCalculoUnico, dataFinalCalculo, dataInicial, dataFinal]);
+
+        setHelperErrorFinalCalculo(false);
+        setErrorFinalCalculo("");
+    }, [isCalculoUnico, dataFinalCalculo, dataInicial, dataFinal, ultimaDataIndice]);
     
     return (
         <div className="flex flex-col items-center justify-center w-full pb-6 space-y-3">
